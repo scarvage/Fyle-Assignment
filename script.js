@@ -17,6 +17,9 @@ function showRepoSearchBar(user) {
   $("#user-info").show();
   $("#search-bar").hide();
   $("#repo-search").show();
+  $("#repositories").show();
+  $("#pagination").show();
+        
 }
 
 
@@ -34,20 +37,30 @@ function fetchUserInfo() {
         $("#loader").hide();
         console.log(data);
         if (status === 'success') {
+          // User found, hide the user-not-found message if it's currently displayed
           $("#user-not-found-message").hide();
           showRepoSearchBar(data);
           fetchRepositories();
         } else {
           console.log("Error fetching user data from GitHub API");
+          // Display an error message on the screen if the request fails
         }
       },
       error: function (xhr, status, error) {
         $("#loader").hide();
         if (xhr.status === 404) {
+          // User not found, display the message on the screen
           $("#user-not-found-message").show();
-          $('#user-info').hide();
+          $("#user-info").hide();
+          $("#repo-search").hide();
+          $("#repositories").hide();
+          $("#pagination").hide();
+        
+
+
         } else {
           console.log("Error fetching user data from GitHub API");
+          // Display an error message on the screen if the request fails
         }
       }
     });
@@ -80,9 +93,11 @@ function fetchRepositories() {
       url: url,
       method: 'GET',
       success: function (data, status, xhr) {
+        // Hide loader
         $('#loader').hide();
   
         if (status === 'success') {
+          // Set totalRepositories
           const linkHeader = xhr.getResponseHeader('Link');
           if (linkHeader) {
             const lastPageMatch = linkHeader.match(/&page=(\d+)>; rel="last"/);
@@ -91,8 +106,10 @@ function fetchRepositories() {
             totalRepositories = data.length;
           }
   
+          // Display repositories
           displayRepositories(data);
   
+          // Display pagination
           displayPagination();
         } else {
           alert('Error fetching data from GitHub API');
@@ -106,7 +123,7 @@ function displayRepositories(repositories) {
   
     repositories.forEach(repo => {
       const repoBox = document.createElement('div');
-      repoBox.className = 'col-md-4 repo-box';  
+      repoBox.className = 'col-md-4 repo-box';  // Adjusted class for Bootstrap grid
   
       const repoName = document.createElement('h3');
       repoName.textContent = repo.name;
@@ -114,9 +131,11 @@ function displayRepositories(repositories) {
       const repoDescription = document.createElement('p');
       repoDescription.textContent = repo.description || 'No description available';
   
+      // Create a separate box for tags
       const tagsContainer = document.createElement('div');
       tagsContainer.className = 'tags-container';
   
+      // Display all tags (languages) individually
       if (repo.languages_url) {
         fetch(repo.languages_url)
           .then(response => response.json())
@@ -168,9 +187,8 @@ function changePage(page) {
   currentPage = page;
   fetchRepositories();
 }
-function searchRepositories(event) {
-    event.preventDefault();
-  
+
+function searchRepositories() {
     const searchTerm = document.getElementById('repo-search-input').value.trim();
     if (searchTerm === '') {
       alert('Please enter a search term.');
@@ -178,56 +196,38 @@ function searchRepositories(event) {
     }
   
     const username = document.getElementById('username').value;
-    const url = `https://api.github.com/users/${username}/repos?per_page=${totalRepositories + 100}`;
+    const url = `https://api.github.com/users/${username}/repos?per_page=${totalRepositories+100}`;
   
+    // Show loader
     $('#loader').show();
   
     $.ajax({
       url: url,
       method: 'GET',
       success: function (data, status) {
+        // Hide loader
+        console.log(data);
+        
         $('#loader').hide();
-  
-        clearPreviousResults();
   
         if (status === 'success') {
+          // Filter repositories based on the search term
           const filteredRepositories = data.filter(repo => repo.name.toLowerCase().includes(searchTerm.toLowerCase()));
-  
+            
+          // Set totalRepositories
           totalRepositories = filteredRepositories.length;
   
+          // Display filtered repositories
           displayRepositories(filteredRepositories);
   
+          // Hide pagination for search results
           const paginationDiv = document.querySelector('.pagination');
           paginationDiv.innerHTML = '';
+          // Show the "Show All Repositories" button after a successful search
           $('#showAllReposBtn').show();
         } else {
-          displayErrorMessage('Error fetching data from GitHub API');
-        }
-      },
-      error: function (xhr, status, error) {
-        $('#loader').hide();
-  
-        clearPreviousResults();
-  
-        if (xhr.status === 404) {
-          displayErrorMessage('User does not exist. Please enter a valid username.');
-        } else {
-          displayErrorMessage('Error fetching data from GitHub API');
+          alert('Error fetching data from GitHub API');
         }
       }
     });
   }
-  function clearPreviousResults() {
-    const repoContainer = document.getElementById('repo-container');
-    repoContainer.innerHTML = '';
-  
-    $('#user-not-found-message').hide();
-    $('#user-info').hide();
-  }
-  
-  function displayErrorMessage(message) {
-    const errorDiv = document.getElementById('error-message');
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-  }
-  
