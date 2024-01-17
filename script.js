@@ -94,71 +94,69 @@ function fetchRepositories() {
   });
 }
 function displayRepositories(repositories) {
-  const repoContainer = document.getElementById("repo-container");
-  repoContainer.innerHTML = "";
-
-  repositories.forEach((repo) => {
-    const repoBox = document.createElement("div");
-    repoBox.className = "col-md-4 repo-box"; // Adjusted class for Bootstrap grid
-
-    const repoName = document.createElement("h3");
-    repoName.textContent = repo.name;
-
-    const repoDescription = document.createElement("p");
-    repoDescription.textContent =
-      repo.description || "No description available";
-
-    const tagsContainer = document.createElement("div");
-    tagsContainer.className = "tags-container";
-
-    if (repo.languages_url) {
-      fetch(repo.languages_url)
-        .then((response) => response.json())
-        .then((languages) => {
-          const tags = Object.keys(languages);
-          tags.forEach((tag) => {
-            const tagBox = document.createElement("div");
-            tagBox.className = "tag-box";
-            tagBox.textContent = tag;
-            tagsContainer.appendChild(tagBox);
+    const repoContainer = document.getElementById('repo-container');
+    repoContainer.innerHTML = '';
+  
+    repositories.forEach(repo => {
+      const repoBox = document.createElement('div');
+      repoBox.className = 'col-md-4 repo-box';  // Adjusted class for Bootstrap grid
+  
+      const repoName = document.createElement('h3');
+      repoName.textContent = repo.name;
+  
+      const repoDescription = document.createElement('p');
+      repoDescription.textContent = repo.description || 'No description available';
+  
+      // Create a separate box for tags
+      const tagsContainer = document.createElement('div');
+      tagsContainer.className = 'tags-container';
+  
+      // Display all tags (languages) individually
+      if (repo.languages_url) {
+        fetch(repo.languages_url)
+          .then(response => response.json())
+          .then(languages => {
+            const tags = Object.keys(languages);
+            tags.forEach(tag => {
+              const tagBox = document.createElement('div');
+              tagBox.className = 'tag-box';
+              tagBox.textContent = tag;
+              tagsContainer.appendChild(tagBox);
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching languages:', error);
+            const noTagsBox = document.createElement('div');
+            noTagsBox.className = 'tag-box';
+            noTagsBox.textContent = 'No tags';
+            tagsContainer.appendChild(noTagsBox);
           });
-        })
-        .catch((error) => {
-          console.error("Error fetching languages:", error);
-          const noTagsBox = document.createElement("div");
-          noTagsBox.className = "tag-box";
-          noTagsBox.textContent = "No tags";
-          tagsContainer.appendChild(noTagsBox);
-        });
-    } else {
-      const noTagsBox = document.createElement("div");
-      noTagsBox.className = "tag-box";
-      noTagsBox.textContent = "No tags";
-      tagsContainer.appendChild(noTagsBox);
-    }
-
-    repoBox.appendChild(repoName);
-    repoBox.appendChild(repoDescription);
-    repoBox.appendChild(tagsContainer);
-
-    repoContainer.appendChild(repoBox);
-  });
-}
-function displayPagination() {
-    const totalPages = Math.ceil(totalRepositories / perPage);
-    const paginationDiv = document.querySelector(".pagination");
-    paginationDiv.innerHTML = "";
-  
-    if (totalPages > 1) { // Only show pagination if there is more than one page
-      for (let i = 1; i <= totalPages; i++) {
-        const li = document.createElement("li");
-        li.className = `page-item ${i === currentPage ? "active" : ""}`;
-        li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
-        paginationDiv.appendChild(li);
+      } else {
+        const noTagsBox = document.createElement('div');
+        noTagsBox.className = 'tag-box';
+        noTagsBox.textContent = 'No tags';
+        tagsContainer.appendChild(noTagsBox);
       }
-    }
-  }
   
+      repoBox.appendChild(repoName);
+      repoBox.appendChild(repoDescription);
+      repoBox.appendChild(tagsContainer);
+  
+      repoContainer.appendChild(repoBox);
+    });
+  }
+  function displayPagination() {
+  const totalPages = Math.ceil(totalRepositories / perPage);
+  const paginationDiv = document.querySelector('.pagination');
+  paginationDiv.innerHTML = '';
+
+  for (let i = 1; i <= totalPages; i++) {
+    const li = document.createElement('li');
+    li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+    li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+    paginationDiv.appendChild(li);
+  }
+}
 
 function changePage(page) {
   currentPage = page;
@@ -203,11 +201,11 @@ function searchRepositories() {
           // Hide pagination for search results
           const paginationDiv = document.querySelector('.pagination');
           paginationDiv.innerHTML = '';
-          $("#showAllReposBtn").show();
         } else {
           alert('Error fetching data from GitHub API');
         }
       }
     });
   }
+  
   
