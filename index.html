@@ -9,42 +9,39 @@
 </head>
 <body>
 
-    <div class="container">
-        <div id="user-info">
-          <img id="user-image" src="" alt="User Image" width="80" height="80">
-          <div id="user-details">
-            <h2 id="user-name"></h2>
-            <p id="github-link"></p>
-          </div>
-        </div>
+  <div class="container">
+    <div id="search-user-bar" class="mb-4">
+      <label for="username">Enter GitHub Username:</label>
+      <input type="text" id="username" class="form-control" placeholder="Enter GitHub Username">
+      <button class="btn btn-primary mt-2" onclick="fetchUserInfo()">Fetch User Info</button>
+    </div>
 
-
-    
-        <div id="search-bar">
-          <label for="username">Enter GitHub Username:</label>
-          <input type="text" id="username" class="form-control" placeholder="Enter GitHub Username">
-          <button class="btn btn-primary mt-2" onclick="fetchUserInfo()">Fetch User Info</button>
-        </div>
-        
-
-        <div id="repo-search" class="mt-4">
-            <label for="repo-search-input">Search Repositories:</label>
-            <input type="text" id="repo-search-input" class="form-control" placeholder="Enter repository name">
-            <button class="btn btn-secondary mt-2" onclick="searchRepositories()">Search Repositories</button>
-            <button class="btn btn-secondary mt-2" id="showAllReposBtn" onclick="showAllRepositories()">Show All Repositories</button>
-        </div>
-  
-        <div id="repositories" class="mt-4">
-          <div class="loader" id="loader">Loading...</div>
-          <div class="row" id="repo-container"></div>
-        </div>
-    
-        <div id="pagination" class="mt-4">
-          <nav aria-label="Page navigation">
-            <ul class="pagination"></ul>
-          </nav>
-        </div>
+    <div id="user-info">
+      <img id="user-image" src="" alt="User Image" width="80" height="80">
+      <div id="user-details">
+        <h2 id="user-name"></h2>
+        <p id="github-link"></p>
       </div>
+    </div>
+
+    <div id="repo-search" class="mt-4">
+      <label for="repo-search-input">Search Repositories:</label>
+      <input type="text" id="repo-search-input" class="form-control" placeholder="Enter repository name">
+      <button class="btn btn-secondary mt-2" onclick="searchRepositories()">Search Repositories</button>
+      <button class="btn btn-secondary mt-2" id="showAllReposBtn" onclick="showAllRepositories()">Show All Repositories</button>
+    </div>
+
+    <div id="repositories" class="mt-4">
+      <div class="loader" id="loader">Loading...</div>
+      <div class="row" id="repo-container"></div>
+    </div>
+
+    <div id="pagination" class="mt-4">
+      <nav aria-label="Page navigation">
+        <ul class="pagination"></ul>
+      </nav>
+    </div>
+  </div>
 
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
