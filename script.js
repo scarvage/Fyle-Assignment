@@ -45,6 +45,7 @@ function fetchUserInfo() {
         $("#loader").hide();
         if (xhr.status === 404) {
           $("#user-not-found-message").show();
+          $('#user-info').hide();
         } else {
           console.log("Error fetching user data from GitHub API");
         }
