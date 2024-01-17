@@ -59,40 +59,41 @@ function displayUserInfo(user) {
 
   $("#user-info").show();
 }
-
 function fetchRepositories() {
-  const username = document.getElementById("username").value;
-  const url = `https://api.github.com/users/${username}/repos?per_page=${perPage}&page=${currentPage}`;
-
-  $("#loader").show();
-
-  $.ajax({
-    url: url,
-    method: "GET",
-    success: function (data, status, xhr) {
-      // Hide loader
-      $("#loader").hide();
-
-      if (status === "success") {
-        const linkHeader = xhr.getResponseHeader("Link");
-        if (linkHeader) {
-          const lastPageMatch = linkHeader.match(/&page=(\d+)>; rel="last"/);
-          totalRepositories = lastPageMatch
-            ? parseInt(lastPageMatch[1]) * perPage
-            : 0;
+    const username = document.getElementById('username').value;
+    const url = `https://api.github.com/users/${username}/repos?per_page=${perPage}&page=${currentPage}`;
+  
+    // Show loader
+    $('#loader').show();
+  
+    $.ajax({
+      url: url,
+      method: 'GET',
+      success: function (data, status, xhr) {
+        // Hide loader
+        $('#loader').hide();
+  
+        if (status === 'success') {
+          // Set totalRepositories
+          const linkHeader = xhr.getResponseHeader('Link');
+          if (linkHeader) {
+            const lastPageMatch = linkHeader.match(/&page=(\d+)>; rel="last"/);
+            totalRepositories = lastPageMatch ? parseInt(lastPageMatch[1]) * perPage : (data.length === perPage ? perPage * currentPage : (perPage * (currentPage - 1) + data.length));
+          } else {
+            totalRepositories = data.length;
+          }
+  
+          // Display repositories
+          displayRepositories(data);
+  
+          // Display pagination
+          displayPagination();
         } else {
-          totalRepositories = data.length;
+          alert('Error fetching data from GitHub API');
         }
-
-        displayRepositories(data);
-
-        displayPagination();
-      } else {
-        alert("Error fetching data from GitHub API");
       }
-    },
-  });
-}
+    });
+  }
 function displayRepositories(repositories) {
     const repoContainer = document.getElementById('repo-container');
     repoContainer.innerHTML = '';
@@ -146,18 +147,19 @@ function displayRepositories(repositories) {
     });
   }
   function displayPagination() {
-  const totalPages = Math.ceil(totalRepositories / perPage);
-  const paginationDiv = document.querySelector('.pagination');
-  paginationDiv.innerHTML = '';
-
-  for (let i = 1; i <= totalPages; i++) {
-    const li = document.createElement('li');
-    li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-    li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
-    paginationDiv.appendChild(li);
+    const totalPages = Math.ceil(totalRepositories / perPage);
+    const paginationDiv = document.querySelector(".pagination");
+    paginationDiv.innerHTML = "";
+  
+    for (let i = 1; i <= totalPages; i++) {
+      const li = document.createElement("li");
+      li.className = `page-item ${i === currentPage ? "active" : ""}`;
+      li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+      paginationDiv.appendChild(li);
+    }
   }
-}
-
+  
+  
 function changePage(page) {
   currentPage = page;
   fetchRepositories();
@@ -165,16 +167,13 @@ function changePage(page) {
 
 function searchRepositories() {
     const searchTerm = document.getElementById('repo-search-input').value.trim();
-    
-    console.log('Search Term:', searchTerm);
-  
     if (searchTerm === '') {
       alert('Please enter a search term.');
       return;
     }
   
     const username = document.getElementById('username').value;
-    const url = `https://api.github.com/users/${username}/repos?per_page=${perPage}`;
+    const url = `https://api.github.com/users/${username}/repos?per_page=${totalRepositories+100}`;
   
     // Show loader
     $('#loader').show();
@@ -184,14 +183,14 @@ function searchRepositories() {
       method: 'GET',
       success: function (data, status) {
         // Hide loader
+        console.log(data);
+        
         $('#loader').hide();
   
         if (status === 'success') {
           // Filter repositories based on the search term
           const filteredRepositories = data.filter(repo => repo.name.toLowerCase().includes(searchTerm.toLowerCase()));
-          
-          console.log('Filtered Repositories:', filteredRepositories);
-  
+            
           // Set totalRepositories
           totalRepositories = filteredRepositories.length;
   
@@ -201,11 +200,11 @@ function searchRepositories() {
           // Hide pagination for search results
           const paginationDiv = document.querySelector('.pagination');
           paginationDiv.innerHTML = '';
+          // Show the "Show All Repositories" button after a successful search
+          $('#showAllReposBtn').show();
         } else {
           alert('Error fetching data from GitHub API');
         }
       }
     });
   }
-  
-  
