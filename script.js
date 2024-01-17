@@ -34,23 +34,19 @@ function fetchUserInfo() {
         $("#loader").hide();
         console.log(data);
         if (status === 'success') {
-          // User found, hide the user-not-found message if it's currently displayed
           $("#user-not-found-message").hide();
           showRepoSearchBar(data);
           fetchRepositories();
         } else {
           console.log("Error fetching user data from GitHub API");
-          // Display an error message on the screen if the request fails
         }
       },
       error: function (xhr, status, error) {
         $("#loader").hide();
         if (xhr.status === 404) {
-          // User not found, display the message on the screen
           $("#user-not-found-message").show();
         } else {
           console.log("Error fetching user data from GitHub API");
-          // Display an error message on the screen if the request fails
         }
       }
     });
@@ -87,7 +83,6 @@ function fetchRepositories() {
         $('#loader').hide();
   
         if (status === 'success') {
-          // Set totalRepositories
           const linkHeader = xhr.getResponseHeader('Link');
           if (linkHeader) {
             const lastPageMatch = linkHeader.match(/&page=(\d+)>; rel="last"/);
@@ -96,10 +91,8 @@ function fetchRepositories() {
             totalRepositories = data.length;
           }
   
-          // Display repositories
           displayRepositories(data);
   
-          // Display pagination
           displayPagination();
         } else {
           alert('Error fetching data from GitHub API');
@@ -113,7 +106,7 @@ function displayRepositories(repositories) {
   
     repositories.forEach(repo => {
       const repoBox = document.createElement('div');
-      repoBox.className = 'col-md-4 repo-box';  // Adjusted class for Bootstrap grid
+      repoBox.className = 'col-md-4 repo-box';  
   
       const repoName = document.createElement('h3');
       repoName.textContent = repo.name;
@@ -121,11 +114,9 @@ function displayRepositories(repositories) {
       const repoDescription = document.createElement('p');
       repoDescription.textContent = repo.description || 'No description available';
   
-      // Create a separate box for tags
       const tagsContainer = document.createElement('div');
       tagsContainer.className = 'tags-container';
   
-      // Display all tags (languages) individually
       if (repo.languages_url) {
         fetch(repo.languages_url)
           .then(response => response.json())
@@ -177,7 +168,6 @@ function changePage(page) {
   currentPage = page;
   fetchRepositories();
 }
-
 function searchRepositories(event) {
     // Prevent the default form submission behavior
     event.preventDefault();
@@ -245,6 +235,7 @@ function searchRepositories(event) {
     const repoContainer = document.getElementById('repo-container');
     repoContainer.innerHTML = '';
   
+    // Clear user not found message
     $('#user-not-found-message').hide();
   }
   
@@ -253,3 +244,4 @@ function searchRepositories(event) {
     errorDiv.textContent = message;
     errorDiv.style.display = 'block';
   }
+  
