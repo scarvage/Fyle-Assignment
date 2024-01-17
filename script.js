@@ -28,24 +28,28 @@ function showAllRepositories() {
     displayPagination();
   }
   
-function fetchUserInfo() {
-  const username = document.getElementById("username").value;
-  const url = `https://api.github.com/users/${username}`;
-
-  $("#loader").show();
-
-  $.get(url, function (data, status) {
-    $("#loader").hide();
-
-    if (status === "success") {
-      showRepoSearchBar(data);
-
-      fetchRepositories();
-    } else {
-      alert("Error fetching user data from GitHub API");
-    }
-  });
-}
+  function fetchUserInfo() {
+    const username = document.getElementById("username").value;
+    const url = `https://api.github.com/users/${username}`;
+  
+    $("#loader").show();
+  
+    $.get(url, function (data, status) {
+      $("#loader").hide();
+  
+      if (status === "success") {
+        if (data.message && data.message.toLowerCase() === "not found") {
+          alert("User does not exist. Please enter a valid username.");
+        } else {
+          showRepoSearchBar(data);
+          fetchRepositories();
+        }
+      } else {
+        alert("Error fetching user data from GitHub API");
+      }
+    });
+  }
+  
 
 function displayUserInfo(user) {
   const userImage = document.getElementById("user-image");
