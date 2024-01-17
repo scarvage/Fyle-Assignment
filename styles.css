@@ -4,3 +4,17 @@ body {
   .loader {
     display: none;
   }
+  #user-info {
+    display: none;
+    align-items: center;
+  }
+  #user-image {
+    border-radius: 50%;
+    margin-right: 20px;
+  }
+  #user-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  

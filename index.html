@@ -6,15 +6,23 @@
   <title>GitHub Repositories</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="styles.css">
-
 </head>
 <body>
 
   <div class="container">
-    <h2>GitHub Repositories</h2>
-    <label for="username">Enter GitHub Username:</label>
-    <input type="text" id="username" class="form-control" placeholder="Enter GitHub Username">
-    <button class="btn btn-primary mt-2" onclick="fetchRepositories()">Fetch Repositories</button>
+    <div id="user-info">
+      <img id="user-image" src="" alt="User Image" width="80" height="80">
+      <div id="user-details">
+        <h2 id="user-name"></h2>
+        <p id="github-link"></p>
+      </div>
+    </div>
+
+    <div id="search-bar">
+      <label for="username">Enter GitHub Username:</label>
+      <input type="text" id="username" class="form-control" placeholder="Enter GitHub Username">
+      <button class="btn btn-primary mt-2" onclick="fetchUserInfo()">Fetch User Info</button>
+    </div>
 
     <div id="repositories" class="mt-4"></div>
 
@@ -31,6 +39,5 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="script.js"></script>
-  
 </body>
 </html>
