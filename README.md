@@ -8,6 +8,7 @@ GitHub Repositories Viewer is a simple web application that allows users to fetc
 - **Fetch Repositories:** View the repositories of the GitHub user with pagination support.
 - **Search Repositories:** Search and filter repositories by name based on a keyword.
 - **Show All Repositories:** Display all repositories after performing a search.
+- **User Not Found:** Display an error message if the username not found.
 
 ## Usage
 
