@@ -163,39 +163,45 @@ function changePage(page) {
 }
 
 function searchRepositories() {
-  const searchTerm = document.getElementById("repo-search-input").value.trim();
+    const searchTerm = document.getElementById('repo-search-input').value.trim();
+    
+    if (searchTerm === '') {
+      alert('Please enter a search term.');
+      return;
+    }
+  
+    const username = document.getElementById('username').value;
+    const url = `https://api.github.com/users/${username}/repos?per_page=${perPage}`;
+  
+    // Show loader
+    $('#loader').show();
+  
+    $.ajax({
+      url: url,
+      method: 'GET',
+      success: function (data, status) {
+        // Hide loader
+        $('#loader').hide();
+  
+        if (status === 'success') {
+          // Filter repositories based on the search term
+          const filteredRepositories = data.filter(repo => repo.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  
+          // Set totalRepositories
+          totalRepositories = filteredRepositories.length;
+  
+          // Display filtered repositories
+          displayRepositories(filteredRepositories);
+  
+          // Hide pagination for search results
+          const paginationDiv = document.querySelector('.pagination');
+          paginationDiv.innerHTML = '';
+            $("#showAllReposBtn").show();
 
-  if (searchTerm === "") {
-    alert("Please enter a search term.");
-    return;
-  }
-
-  const username = document.getElementById("username").value;
-  const url = `https://api.github.com/users/${username}/repos?per_page=${perPage}`;
-
-  $("#loader").show();
-
-  $.ajax({
-    url: url,
-    method: "GET",
-    success: function (data, status) {
-      $("#loader").hide();
-
-      if (status === "success") {
-        const filteredRepositories = data.filter((repo) =>
-          repo.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
-        totalRepositories = filteredRepositories.length;
-
-        displayRepositories(filteredRepositories);
-
-        const paginationDiv = document.querySelector(".pagination");
-        paginationDiv.innerHTML = "";
-        $("#showAllReposBtn").show();
-      } else {
-        alert("Error fetching data from GitHub API");
+        } else {
+          alert('Error fetching data from GitHub API');
+        }
       }
-    },
-  });
-}
+    });
+  }
+  
