@@ -245,7 +245,6 @@ function searchRepositories(event) {
     const repoContainer = document.getElementById('repo-container');
     repoContainer.innerHTML = '';
   
-    // Clear user not found message
     $('#user-not-found-message').hide();
   }
   
