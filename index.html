@@ -17,13 +17,23 @@
             <p id="github-link"></p>
           </div>
         </div>
+
+
     
         <div id="search-bar">
           <label for="username">Enter GitHub Username:</label>
           <input type="text" id="username" class="form-control" placeholder="Enter GitHub Username">
           <button class="btn btn-primary mt-2" onclick="fetchUserInfo()">Fetch User Info</button>
         </div>
-    
+        
+
+        <div id="repo-search" class="mt-4">
+            <label for="repo-search-input">Search Repositories:</label>
+            <input type="text" id="repo-search-input" class="form-control" placeholder="Enter repository name">
+            <button class="btn btn-secondary mt-2" onclick="searchRepositories()">Search Repositories</button>
+            <button class="btn btn-secondary mt-2" id="showAllReposBtn" onclick="showAllRepositories()">Show All Repositories</button>
+        </div>
+  
         <div id="repositories" class="mt-4">
           <div class="loader" id="loader">Loading...</div>
           <div class="row" id="repo-container"></div>

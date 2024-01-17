@@ -2,31 +2,46 @@ const perPage = 10;
 let currentPage = 1;
 let totalRepositories = 0;
 
-function fetchUserInfo() {
-  const username = document.getElementById('username').value;
-  const url = `https://api.github.com/users/${username}`;
-
-  // Show loader
-  $('#loader').show();
-
-  $.get(url, function (data, status) {
-    // Hide loader
-    $('#loader').hide();
-
-    if (status === 'success') {
-      // Display user information
-      displayUserInfo(data);
-
-      // Fetch repositories
-      fetchRepositories();
-
-      // Hide search bar
-      $('#search-bar').hide();
-    } else {
-      alert('Error fetching user data from GitHub API');
-    }
-  });
-}
+// Add this function to your existing script.js
+function showRepoSearchBar(user) {
+    // Display user image, name, and GitHub link
+    const userImage = document.getElementById('user-image');
+    userImage.src = user.avatar_url;
+  
+    const userName = document.getElementById('user-name');
+    userName.textContent = user.name || user.login;
+  
+    const githubLink = document.getElementById('github-link');
+    githubLink.innerHTML = `<a href="${user.html_url}" target="_blank">${user.html_url}</a>`;
+  
+    // Hide user info and show repository search bar
+    $('#user-info').show();
+    $('#search-bar').hide();
+    $('#repo-search').show();
+  }
+  function fetchUserInfo() {
+    const username = document.getElementById('username').value;
+    const url = `https://api.github.com/users/${username}`;
+  
+    // Show loader
+    $('#loader').show();
+  
+    $.get(url, function (data, status) {
+      // Hide loader
+      $('#loader').hide();
+  
+      if (status === 'success') {
+        // Show user information and repository search bar
+        showRepoSearchBar(data);
+  
+        // Fetch repositories
+        fetchRepositories();
+      } else {
+        alert('Error fetching user data from GitHub API');
+      }
+    });
+  }
+  
 
 function displayUserInfo(user) {
   const userImage = document.getElementById('user-image');
@@ -146,3 +161,47 @@ function changePage(page) {
   currentPage = page;
   fetchRepositories();
 }
+
+
+function searchRepositories() {
+    const searchTerm = document.getElementById('repo-search-input').value.trim();
+    
+    if (searchTerm === '') {
+      alert('Please enter a search term.');
+      return;
+    }
+  
+    const username = document.getElementById('username').value;
+    const url = `https://api.github.com/users/${username}/repos?per_page=${perPage}`;
+  
+    // Show loader
+    $('#loader').show();
+  
+    $.ajax({
+      url: url,
+      method: 'GET',
+      success: function (data, status) {
+        // Hide loader
+        $('#loader').hide();
+  
+        if (status === 'success') {
+          // Filter repositories based on the search term
+          const filteredRepositories = data.filter(repo => repo.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  
+          // Set totalRepositories
+          totalRepositories = filteredRepositories.length;
+  
+          // Display filtered repositories
+          displayRepositories(filteredRepositories);
+  
+          // Hide pagination for search results
+          const paginationDiv = document.querySelector('.pagination');
+          paginationDiv.innerHTML = '';
+        } else {
+          alert('Error fetching data from GitHub API');
+        }
+      }
+    });
+  }
+  
+  
