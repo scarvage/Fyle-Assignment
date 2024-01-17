@@ -18,38 +18,46 @@ function showRepoSearchBar(user) {
   $("#search-bar").hide();
   $("#repo-search").show();
 }
-function showAllRepositories() {
-    $("#user-info").show();
-    $("#search-bar").show();
-    $("#repo-search").show();
-    $("#showAllReposBtn").hide();
-    document.getElementById("repo-search-input").value = "";
-    fetchRepositories();
-    displayPagination();
-  }
-  
-  function fetchUserInfo() {
+
+function fetchUserInfo() {
     const username = document.getElementById("username").value;
     const url = `https://api.github.com/users/${username}`;
   
     $("#loader").show();
+    console.log(url);
   
-    $.get(url, function (data, status) {
-      $("#loader").hide();
-  
-      if (status === "success") {
-        if (data.message && data.message.toLowerCase() === "not found") {
-          alert("User does not exist. Please enter a valid username.");
-        } else {
+    $.ajax({
+      url: url,
+      method: 'GET',
+      success: function (data, status) {
+        $("#loader").hide();
+        console.log(data);
+        if (status === 'success') {
+          // User found, hide the user-not-found message if it's currently displayed
+          $("#user-not-found-message").hide();
           showRepoSearchBar(data);
           fetchRepositories();
+        } else {
+          console.log("Error fetching user data from GitHub API");
+          // Display an error message on the screen if the request fails
         }
-      } else {
-        alert("Error fetching user data from GitHub API");
+      },
+      error: function (xhr, status, error) {
+        $("#loader").hide();
+        if (xhr.status === 404) {
+          // User not found, display the message on the screen
+          $("#user-not-found-message").show();
+        } else {
+          console.log("Error fetching user data from GitHub API");
+          // Display an error message on the screen if the request fails
+        }
       }
     });
   }
   
+  
+  
+
 
 function displayUserInfo(user) {
   const userImage = document.getElementById("user-image");

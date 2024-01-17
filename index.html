@@ -9,6 +9,8 @@
 </head>
 <body>
 
+
+  
   <div class="container">
     <div id="search-user-bar" class="mb-4">
       <label for="username">Enter GitHub Username:</label>
@@ -16,6 +18,9 @@
       <button class="btn btn-primary mt-2" onclick="fetchUserInfo()">Fetch User Info</button>
     </div>
 
+    <div id="user-not-found-message" style="display: none;">
+        User does not exist. Please enter a valid username.
+      </div>
     <div id="user-info">
       <img id="user-image" src="" alt="User Image" width="80" height="80">
       <div id="user-details">
