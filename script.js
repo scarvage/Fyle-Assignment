@@ -3,40 +3,36 @@ const perPage = 10;
     let totalRepositories = 0;
   
     function fetchRepositories() {
-      const username = document.getElementById('username').value;
-      const url = `https://api.github.com/users/${username}/repos?per_page=${perPage}&page=${currentPage}`;
-  
-      // Show loader
-      $('#loader').show();
-  
-      $.ajax({
-        url: url,
-        method: 'GET',
-        success: function (data, status, xhr) {
-          // Hide loader
-          $('#loader').hide();
-  
-          if (status === 'success') {
-            // Set totalRepositories
-            const linkHeader = xhr.getResponseHeader('Link');
-            if (linkHeader) {
-              const lastPageMatch = linkHeader.match(/&page=(\d+)>; rel="last"/);
-              totalRepositories = lastPageMatch ? parseInt(lastPageMatch[1]) * perPage : 0;
+        const username = document.getElementById('username').value;
+        const url = `https://api.github.com/users/${username}/repos?per_page=${perPage}&page=${currentPage}`;
+      
+        $('#loader').show();
+      
+        $.ajax({
+          url: url,
+          method: 'GET',
+          success: function (data, status, xhr) {
+            $('#loader').hide();
+      
+            if (status === 'success') {
+              const linkHeader = xhr.getResponseHeader('Link');
+              if (linkHeader) {
+                const lastPageMatch = linkHeader.match(/&page=(\d+)>; rel="last"/);
+                totalRepositories = lastPageMatch ? parseInt(lastPageMatch[1]) * perPage : (data.length === perPage ? perPage * currentPage : (perPage * (currentPage - 1) + data.length));
+              } else {
+                totalRepositories = data.length;
+              }
+      
+              displayRepositories(data);
+      
+              displayPagination();
             } else {
-              totalRepositories = data.length;
+              alert('Error fetching data from GitHub API');
             }
-  
-            // Display repositories
-            displayRepositories(data);
-  
-            // Display pagination
-            displayPagination();
-          } else {
-            alert('Error fetching data from GitHub API');
           }
-        }
-      });
-    }
+        });
+      }
+      
   
     function displayRepositories(repositories) {
       const repositoriesDiv = document.getElementById('repositories');
