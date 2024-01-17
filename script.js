@@ -77,34 +77,59 @@ function fetchRepositories() {
     }
   });
 }
-
 function displayRepositories(repositories) {
-  const repoContainer = document.getElementById('repo-container');
-  repoContainer.innerHTML = '';
-
-  repositories.forEach(repo => {
-    const repoBox = document.createElement('div');
-    repoBox.className = 'col-md-4 repo-box';  // Adjusted class for Bootstrap grid
-
-    const repoName = document.createElement('h3');
-    repoName.textContent = repo.name;
-
-    const repoDescription = document.createElement('p');
-    repoDescription.textContent = repo.description || 'No description available';
-
-    const repoTags = document.createElement('p');
-    repoTags.className = 'repo-tags';
-    repoTags.textContent = 'Tags: ' + (repo.language ? repo.language : 'No tags');
-
-    repoBox.appendChild(repoName);
-    repoBox.appendChild(repoDescription);
-    repoBox.appendChild(repoTags);
-
-    repoContainer.appendChild(repoBox);
-  });
-}
-
-function displayPagination() {
+    const repoContainer = document.getElementById('repo-container');
+    repoContainer.innerHTML = '';
+  
+    repositories.forEach(repo => {
+      const repoBox = document.createElement('div');
+      repoBox.className = 'col-md-4 repo-box';  // Adjusted class for Bootstrap grid
+  
+      const repoName = document.createElement('h3');
+      repoName.textContent = repo.name;
+  
+      const repoDescription = document.createElement('p');
+      repoDescription.textContent = repo.description || 'No description available';
+  
+      // Create a separate box for tags
+      const tagsContainer = document.createElement('div');
+      tagsContainer.className = 'tags-container';
+  
+      // Display all tags (languages) individually
+      if (repo.languages_url) {
+        fetch(repo.languages_url)
+          .then(response => response.json())
+          .then(languages => {
+            const tags = Object.keys(languages);
+            tags.forEach(tag => {
+              const tagBox = document.createElement('div');
+              tagBox.className = 'tag-box';
+              tagBox.textContent = tag;
+              tagsContainer.appendChild(tagBox);
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching languages:', error);
+            const noTagsBox = document.createElement('div');
+            noTagsBox.className = 'tag-box';
+            noTagsBox.textContent = 'No tags';
+            tagsContainer.appendChild(noTagsBox);
+          });
+      } else {
+        const noTagsBox = document.createElement('div');
+        noTagsBox.className = 'tag-box';
+        noTagsBox.textContent = 'No tags';
+        tagsContainer.appendChild(noTagsBox);
+      }
+  
+      repoBox.appendChild(repoName);
+      repoBox.appendChild(repoDescription);
+      repoBox.appendChild(tagsContainer);
+  
+      repoContainer.appendChild(repoBox);
+    });
+  }
+  function displayPagination() {
   const totalPages = Math.ceil(totalRepositories / perPage);
   const paginationDiv = document.querySelector('.pagination');
   paginationDiv.innerHTML = '';
