@@ -19,6 +19,7 @@ function showRepoSearchBar(user) {
   $("#repo-search").show();
 }
 
+
 function fetchUserInfo() {
     const username = document.getElementById("username").value;
     const url = `https://api.github.com/users/${username}`;
@@ -177,7 +178,10 @@ function changePage(page) {
   fetchRepositories();
 }
 
-function searchRepositories() {
+function searchRepositories(event) {
+    // Prevent the default form submission behavior
+    event.preventDefault();
+  
     const searchTerm = document.getElementById('repo-search-input').value.trim();
     if (searchTerm === '') {
       alert('Please enter a search term.');
@@ -185,7 +189,7 @@ function searchRepositories() {
     }
   
     const username = document.getElementById('username').value;
-    const url = `https://api.github.com/users/${username}/repos?per_page=${totalRepositories+100}`;
+    const url = `https://api.github.com/users/${username}/repos?per_page=${totalRepositories + 100}`;
   
     // Show loader
     $('#loader').show();
@@ -195,14 +199,15 @@ function searchRepositories() {
       method: 'GET',
       success: function (data, status) {
         // Hide loader
-        console.log(data);
-        
         $('#loader').hide();
+  
+        // Clear previous search results
+        clearPreviousResults();
   
         if (status === 'success') {
           // Filter repositories based on the search term
           const filteredRepositories = data.filter(repo => repo.name.toLowerCase().includes(searchTerm.toLowerCase()));
-            
+  
           // Set totalRepositories
           totalRepositories = filteredRepositories.length;
   
@@ -215,8 +220,37 @@ function searchRepositories() {
           // Show the "Show All Repositories" button after a successful search
           $('#showAllReposBtn').show();
         } else {
-          alert('Error fetching data from GitHub API');
+          // Display error message
+          displayErrorMessage('Error fetching data from GitHub API');
+        }
+      },
+      error: function (xhr, status, error) {
+        // Hide loader
+        $('#loader').hide();
+  
+        // Clear previous search results
+        clearPreviousResults();
+  
+        if (xhr.status === 404) {
+          // Display error message for user not found
+          displayErrorMessage('User does not exist. Please enter a valid username.');
+        } else {
+          // Display general error message
+          displayErrorMessage('Error fetching data from GitHub API');
         }
       }
     });
+  }
+  function clearPreviousResults() {
+    const repoContainer = document.getElementById('repo-container');
+    repoContainer.innerHTML = '';
+  
+    // Clear user not found message
+    $('#user-not-found-message').hide();
+  }
+  
+  function displayErrorMessage(message) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
   }
